@@ -5,7 +5,7 @@ type = "ui_extension"
 name = "cash-payout"
 uid = "2156269a-69e9-ff0e-05f4-7ffaf724a5bdc81a4b1f"
 handle = "cash-payout"
-description = "A preact POS UI extension"
+description = "remove cash extension"
 
 # module: file that contains your extension’s source code
 # target: location where your extension appears in POS

@@ -7,8 +7,8 @@ export default async () => {
 function Extension() {
   return (
     <s-tile
-      heading="POS smart grid"
-      subheading="preact Extension"
+      heading="Cash Pay Out"
+      //subheading="preact Extension"
       onClick={() => shopify.action.presentModal()}
     />
   );
