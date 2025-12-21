@@ -7,7 +7,7 @@ export default async () => {
 };
 
 function Extension() {
-  const [expectedCash, setExpectedCash] = useState(125.0);
+  const [expectedCash, setExpectedCash] = useState(125.0); //TODO
   const [showCountModal, setShowCountModal] = useState(false);
 
   return (
@@ -16,7 +16,10 @@ function Extension() {
         <s-box padding="small">
           <s-text>TODO: Expected cash balance</s-text>
           <s-text>{formatCurrency(expectedCash)}</s-text>
-
+          <s-number-field
+          label='Amount counted'
+          required
+          />
             <s-button onClick={() => setShowCountModal(true)} aria-label="count-cash">Count cash</s-button>
         </s-box>
       </s-scroll-box>
