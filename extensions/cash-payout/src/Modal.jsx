@@ -15,7 +15,7 @@ async function getExpectedCashAmt(locationId) {
       body: JSON.stringify({
         query: `
         query getCashSession {
-          cashTrackingSessions(first: 1) {
+          cashTrackingSessions(first: 1, sortKey:OPENING_TIME_DESC) {
             edges {
               node {
                 id
@@ -42,9 +42,8 @@ function Extension() {
 
 
     useEffect(() => {
-      var mounted = true;
-      if(mounted) {
-        // If your extension needs a specific location, supply it here
+      //var mounted = true;
+      if(true) {
         // setDebugMsg('fetching cash-session');
         getExpectedCashAmt()
         .catch((e) => { setError('error fetching current register amount: ' + e.message); })
@@ -52,7 +51,7 @@ function Extension() {
           //setDebugMsg('in then. data: ' + data.cashTrackingSessions.edges[0].node.expectedBalance.amount);
           setExpectedCash(Number(data.cashTrackingSessions.edges[0].node.expectedBalance.amount));
         }).catch((e) => { setError('error processing current register amount: ' + e.message); });
-        mounted = false;
+        //mounted = false;
       }
       }, []);
 
@@ -61,7 +60,7 @@ function Extension() {
       <s-text tone="critical">{error}</s-text>
       <s-text tone="info">{debugMsg}</s-text>
       <s-scroll-box>
-        <s-box padding="large">
+        {!showCountModal ? <s-box padding="large">
           <s-text>Current Register Balance</s-text>
           <s-text>{formatCurrency(expectedCash)}</s-text> 
 
@@ -80,7 +79,7 @@ function Extension() {
             </s-box>
             </s-stack>
         </s-box>
-      {showCountModal && (
+      :
         <CashCountModal
           onClose={() => setShowCountModal(false)}
           onConfirm={(total) => {
@@ -88,7 +87,7 @@ function Extension() {
               setShowCountModal(false);
             }}
           />
-        )} 
+        } 
         </s-scroll-box>
     </s-page>
   );
