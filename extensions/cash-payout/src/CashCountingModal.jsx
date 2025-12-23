@@ -18,9 +18,12 @@ export default function CashCountModal({onClose, onConfirm}) {
     });
   }
   return (
-    <s-section heading='Count Bills'>
+      // <div style={{position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999}}>
+      // <div style={{background: '#fff', padding: 20, borderRadius: 8, width: 480, maxWidth: '95%'}}>
+       
+     <s-section heading='Count Bills'>
       <s-box padding='large'>
-           {/* <s-heading >Count cash</s-heading> */}
+           <s-heading >Count cash</s-heading>
         <s-scroll-box>
           {denominations.map((d) => (
             // <s-text>yay</s-text>
@@ -38,18 +41,17 @@ export default function CashCountModal({onClose, onConfirm}) {
             }
             </s-scroll-box>
             <s-text>Counted total: {formatCurrency(total)}</s-text>
-            <s-button onClick={onClose}>Close</s-button>
-            <s-button onClick={onConfirm}>Save</s-button>  
+            <s-button onClick={onClose}>Cancel</s-button>
+            <s-button onClick={() => onConfirm(total)}>Save</s-button>  
             </s-box>
   </s-section>
+
   );
 }
 
 
  function InputCashAmountRow({updateCount, denomination, amt, increment}) {
-   return(//<s-text>testing</s-text>
-
-  
+   return(//<s-text>testing</s-text>  
     <s-stack direction="inline" justifyContent="space-between" alignItems='center'//gap="small" padding="small"
     >
       <s-box maxInlineSize='30%' minInlineSize='30%'>
