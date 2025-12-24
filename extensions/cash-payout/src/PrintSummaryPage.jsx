@@ -16,6 +16,7 @@ export default function PrintSummaryPage({expectedCash, countedCash, amtToRemove
               <TextRow label='Amount left in drawer' value={formatCurrency(countedCash - amtToRemove)} /> 
               <TextRow label='Removed Cash' value={formatCurrency(amtToRemove)} /> 
               <TextRow label='Counted Cash' value={formatCurrency(countedCash)} /> 
+              <TextRow label='Expected amount in register' value={formatCurrency(expectedCash)} /> 
               <TextRow label='Discrepancy' value={formatCurrency(countedCash - expectedCash)} orange={countedCash != expectedCash} />
               
               {/* <s-stack direction='inline' justifyContent='end' padding='small-100'>

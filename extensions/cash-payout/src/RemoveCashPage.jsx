@@ -7,9 +7,11 @@ export default function RemoveCashPage({countedCash, goToNextPage, amtToRemove, 
 
     return (
       //  <s-text>testing...</s-text>
-      <>
+      <s-stack gap='large-100' direction='block'>
 
              <s-heading>Select amount of cash to remove</s-heading>
+             <s-stack direction='inline' alignItems='center' gap='small-100' justifyContent='end'>
+                  <s-text>$</s-text>
              <s-number-field
               label='Amount to remove'
               required
@@ -21,10 +23,14 @@ export default function RemoveCashPage({countedCash, goToNextPage, amtToRemove, 
                 if (Number(e.currentTarget.value) > countedCash) {
                   setError('Amount to remove cannot exceed counted cash amount of ' + formatCurrency(countedCash));
                 }
+                else {
+                  setError('');
+                }
             }}
             />
-             <s-button slot='footer' variant={error ?  'secondary' :'primary' } onClick={error ? null : goToNextPage}>Remove Cash</s-button>
-      </>
+            </s-stack>
+             <s-button variant={error ?  'secondary' :'primary' } onClick={error ? null : goToNextPage}>Remove Cash</s-button>
+      </s-stack>
         );
 
   }
