@@ -1,17 +1,35 @@
+import { useState } from 'preact/hooks';
 import { formatCurrency } from './helper-functions.jsx';
 import TextRow from './TextRow.jsx';
 
 
 
 export default function PrintSummaryPage({expectedCash, countedCash, amtToRemove}) {
-  function printSummary() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+  
+  const printSummary = async () => {
+    const params = new URLSearchParams({
+      expected: expectedCash.toString(),
+      counted: countedCash.toString(),
+      removed: amtToRemove.toString(),
+    });
+    const src = `/print?${params.toString()}`;
 
-      const documentPath ='';
-      shopify.print.print(documentPath);
-      }
+    setIsLoading(true);
+    try {
+      await shopify.print.print(src);
+    } catch (error) {
+      setError(error.message)
+      console.error('Print failed:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
      <s-page>
-
+      <s-text tone='critical'>{error}</s-text>
             <s-heading>Cash Summary</s-heading>
               <TextRow label='Amount left in drawer' value={formatCurrency(countedCash - amtToRemove)} /> 
               <TextRow label='Removed Cash' value={formatCurrency(amtToRemove)} /> 
@@ -29,7 +47,7 @@ export default function PrintSummaryPage({expectedCash, countedCash, amtToRemove
               <s-button  variant='secondary' onClick={printSummary}>Print</s-button>
               </s-box>
                 <s-box maxInlineSize='43%' minInlineSize='43%'>
-              <s-button  variant='secondary' onClick={window.close}>Done</s-button>
+              <s-button  variant='secondary'loading={isLoading} onClick={window.close}>Done</s-button>
                 </s-box>
               </s-stack>
      </s-page>

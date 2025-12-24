@@ -7,11 +7,8 @@ export function formatCurrency(n) {
 //   } catch (e) {
     //return `caught: $${n.toFixed(2)}`;
  // }
- const num = n;
- if (isNaN(n)) {
-   return String(n);
- }
- return `$${n.toFixed(2)}`;
+
+ return `$${Number(n).toFixed(2)}`;
 }
 
 export function formatDenomination(d) {
