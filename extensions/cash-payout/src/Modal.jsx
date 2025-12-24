@@ -65,7 +65,7 @@ function Extension() {
       function goToNextPage() {
         setPage((prev) => prev + 1);
       }
-      const backButtonText = '< back';
+      const backButtonText = '<  Back';
   return (
     <s-page heading="Pay Out">
       {error && <s-text tone="critical">{error}</s-text>}
