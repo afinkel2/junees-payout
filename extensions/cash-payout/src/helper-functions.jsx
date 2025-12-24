@@ -1,5 +1,5 @@
 
-export function formatCurrency(n) { //n is a num
+export function formatCurrency(n) { 
 //  try {
 //     if (typeof Intl !== 'undefined' && typeof Intl.NumberFormat === 'function') {
 //       return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
@@ -7,6 +7,10 @@ export function formatCurrency(n) { //n is a num
 //   } catch (e) {
     //return `caught: $${n.toFixed(2)}`;
  // }
+ const num = n;
+ if (isNaN(n)) {
+   return String(n);
+ }
  return `$${n.toFixed(2)}`;
 }
 

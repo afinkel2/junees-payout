@@ -1,7 +1,11 @@
 import {render} from 'preact';
-import CashCountModal from './CashCountingModal.jsx';
+import CountingTool from './CountingTool.jsx';
 import {useState, useEffect} from 'preact/hooks';
 import { formatCurrency } from './helper-functions.jsx';
+import CountCashPage from './CountCash.jsx';
+import SummaryPage from './SummaryPage.jsx';
+import RemoveCashPage from './RemoveCashPage.jsx';
+import PrintSummaryPage from './PrintSummaryPage.jsx';
 
 export default async () => {
   render(<Extension />, document.body);
@@ -9,7 +13,6 @@ export default async () => {
 
 async function getExpectedCashAmt(locationId) {
   try {
-
     const res = await fetch('shopify:admin/api/graphql.json', {
       method: 'POST',
       body: JSON.stringify({
@@ -19,6 +22,7 @@ async function getExpectedCashAmt(locationId) {
             edges {
               node {
                 id
+                closingBalance { amount currencyCode }
                 expectedBalance { amount currencyCode }
               }
             }
@@ -33,12 +37,13 @@ async function getExpectedCashAmt(locationId) {
 }
 
 function Extension() {
-  const [expectedCash, setExpectedCash] = useState(0.0); //TODO
+  const [expectedCash, setExpectedCash] = useState(0.0);
   const [countedCash, setCountedCash] = useState(0.0);
-  const [showCountModal, setShowCountModal] = useState(false);
+  const [page, setPage] = useState(1);
   const [error, setError] = useState('');
   const [debugMsg, setDebugMsg] = useState('');
-
+  const [amtToRemove, setAmtToRemove] = useState(0.0);
+  
 
 
     useEffect(() => {
@@ -48,46 +53,41 @@ function Extension() {
         getExpectedCashAmt()
         .catch((e) => { setError('error fetching current register amount: ' + e.message); })
         .then(({data}) => {
+          const cashTrackingSession = data.cashTrackingSessions.edges[0].node;
+          const amountInRegister = cashTrackingSession.closingBalance?.amount ?? cashTrackingSession.expectedBalance.amount;
           //setDebugMsg('in then. data: ' + data.cashTrackingSessions.edges[0].node.expectedBalance.amount);
-          setExpectedCash(Number(data.cashTrackingSessions.edges[0].node.expectedBalance.amount));
+          setExpectedCash(Number(amountInRegister));
         }).catch((e) => { setError('error processing current register amount: ' + e.message); });
         //mounted = false;
       }
       }, []);
 
+      function goToNextPage() {
+        setPage((prev) => prev + 1);
+      }
+      const backButtonText = '< back';
   return (
     <s-page heading="Pay Out">
-      <s-text tone="critical">{error}</s-text>
-      <s-text tone="info">{debugMsg}</s-text>
-      <s-scroll-box>
-        {!showCountModal ? <s-box padding="large">
-          <s-text>Current Register Balance</s-text>
-          <s-text>{formatCurrency(expectedCash)}</s-text> 
-
-          <s-stack direction='inline' justifyContent='space-around'
-          alignItems='center'
-          padding='large'>
-            <s-box maxInlineSize='40%' minInlineSize='40%'>
-              <s-button onClick={() => setShowCountModal(true)} aria-label="count-cash">Count Bills</s-button>
-            </s-box>
-            <s-box maxInlineSize='40%' minInlineSize='40%'>
-            <s-number-field
-            label='Amount counted'
-            value={formatCurrency(countedCash)}      
-            
-            />
-            </s-box>
-            </s-stack>
-        </s-box>
-      :
-        <CashCountModal
-          onClose={() => setShowCountModal(false)}
-          onConfirm={(total) => {
-              setCountedCash(Number(total.toFixed(2)));
-              setShowCountModal(false);
-            }}
-          />
-        } 
+      {error && <s-text tone="critical">{error}</s-text>}
+      {debugMsg && <s-text tone="info">{debugMsg}</s-text>}
+      { page!=1 && 
+          <s-stack direction='inline' alignItems='center' gap='small-100' justifyContent='start' padding='small-200' >
+            <s-button onClick={() =>setPage((prev) => prev - 1)}>{backButtonText}</s-button>
+            </s-stack>}
+      <s-scroll-box padding='small large-100'>
+        {(() => {
+        switch (page) {
+          case 1:
+            return <CountCashPage expectedCash={expectedCash} countedCash={countedCash} setCountedCash={setCountedCash} goToNextPage={goToNextPage}/>
+          case 2:
+            return <SummaryPage expectedCash={expectedCash} countedCash={countedCash} goToNextPage={goToNextPage}/>
+          case 3:
+            return <RemoveCashPage countedCash={countedCash} amtToRemove={amtToRemove} setAmtToRemove={setAmtToRemove} goToNextPage={goToNextPage}/>
+          case 4:
+            return <PrintSummaryPage expectedCash={expectedCash} countedCash={countedCash} amtToRemove={amtToRemove}/>
+          
+          }})()
+      } 
         </s-scroll-box>
     </s-page>
   );
